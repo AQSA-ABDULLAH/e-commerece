@@ -1,17 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ShoppingCart, Menu } from "lucide-react";
 import Cart from "./cart/Cart";
-import { useSelector } from "react-redux"; // ✅ Import useSelector
+import { useSelector } from "react-redux"; 
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false); // ✅ Track hydration completion
 
-  const cartItems = useSelector((state: any) => state.cart.cart); // ✅ Get cart items from Redux
-  const cartCount = cartItems.length; // ✅ Get the count of cart items
+  const cartItems = useSelector((state: any) => state.cart.cart);
+  const cartCount = cartItems.length;
+
+  useEffect(() => {
+    setIsMounted(true); // ✅ Ensure rendering only after client mounts
+  }, []);
 
   return (
     <nav className="bg-white shadow-md p-4 relative">
@@ -42,8 +47,8 @@ const Navbar: React.FC = () => {
             onClick={() => setIsCartOpen(true)}
           >
             <ShoppingCart size={24} />
-            {/* ✅ Show badge only if cart is not empty */}
-            {cartCount > 0 && (
+            {/* ✅ Show badge only if mounted and cart has items */}
+            {isMounted && cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
                 {cartCount}
               </span>
@@ -82,5 +87,6 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
 
 
