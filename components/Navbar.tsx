@@ -1,13 +1,17 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { ShoppingCart, Menu } from 'lucide-react';
-import Cart from './cart/Cart';
+import React, { useState } from "react";
+import Link from "next/link";
+import { ShoppingCart, Menu } from "lucide-react";
+import Cart from "./cart/Cart";
+import { useSelector } from "react-redux"; // ✅ Import useSelector
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const cartItems = useSelector((state: any) => state.cart.cart); // ✅ Get cart items from Redux
+  const cartCount = cartItems.length; // ✅ Get the count of cart items
 
   return (
     <nav className="bg-white shadow-md p-4 relative">
@@ -38,7 +42,12 @@ const Navbar: React.FC = () => {
             onClick={() => setIsCartOpen(true)}
           >
             <ShoppingCart size={24} />
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">2</span>
+            {/* ✅ Show badge only if cart is not empty */}
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                {cartCount}
+              </span>
+            )}
           </button>
 
           {/* Mobile Menu Button */}
@@ -73,4 +82,5 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
 
