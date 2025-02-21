@@ -22,10 +22,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
-        <Navbar />
-        <StoreProvider>{children}</StoreProvider>
+        {/* Wrap the entire app with Redux StoreProvider */}
+        <StoreProvider>
+          <Navbar />
+          {children}
+        </StoreProvider>
       </body>
     </html>
   );
 }
+
 
