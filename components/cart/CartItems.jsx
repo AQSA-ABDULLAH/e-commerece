@@ -1,6 +1,5 @@
-// CartItem.jsx
 import React from "react";
-import Image from "next/image"; 
+import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { AiOutlineDelete } from "react-icons/ai";
 import { removeFromCart } from "../../app/lib/features/cart/slice";
@@ -16,14 +15,16 @@ function CartItems() {
   return (
     <div className="">
       {cartItems.length === 0 ? (
-        <h2 className="text-lg font-semibold">No Items in Cart</h2>
+        <h2 className="text-lg font-semibold text-gray-700 dark:text-white">
+          No Items in Cart
+        </h2>
       ) : (
         cartItems.map((item) => (
           <div
             key={item.id}
-            className="my-[16px] rounded-[10px] p-[10px] bg-[#ffffff] text-[#000] font-style"
+            className="my-4 rounded-lg p-4 bg-gray-100 text-black dark:bg-gray-800 dark:text-white shadow-md"
           >
-            <div className="flex gap-8 items-center">
+            <div className="flex gap-6 items-center">
               <Image
                 src={item.image}
                 alt={item.title}
@@ -32,19 +33,19 @@ function CartItems() {
                 priority
                 placeholder="blur"
                 blurDataURL="/placeholder.jpg"
-                className="w-14 h-14"
+                className="w-14 h-14 rounded-md"
               />
               <div>
-                <h3 className="font-semibold text-[12.8px]">{item.title}</h3>
-                <p className="text-[16px] text-[#DA0037] font-bold mt-[8px]">
+                <h3 className="font-semibold text-sm">{item.title}</h3>
+                <p className="text-lg text-red-500 font-bold mt-2">
                   $ {item.price}
                 </p>
               </div>
             </div>
 
-            <div className="flex w-[100%] justify-end mt-[8px]">
-              <button onClick={() => handleDelete(item.id)}>
-                <AiOutlineDelete className="cursor-pointer" />
+            <div className="flex justify-end mt-3">
+              <button onClick={() => handleDelete(item.id)} className="text-gray-600 dark:text-white hover:text-red-500">
+                <AiOutlineDelete className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -55,3 +56,4 @@ function CartItems() {
 }
 
 export default CartItems;
+

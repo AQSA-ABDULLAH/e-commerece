@@ -24,7 +24,7 @@ const ProductDetail: React.FC = () => {
       </div>
     );
   if (!product)
-    return <div className="text-gray-700 text-center text-lg">Loading...</div>;
+    return <div className="text-gray-700 dark:text-gray-300 text-center text-lg">Loading...</div>;
 
   // Function to handle adding product to cart
   const handleAddToCart = () => {
@@ -33,8 +33,10 @@ const ProductDetail: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6 flex justify-center items-center">
-      <div className="flex w-full bg-white border rounded-lg p-8 shadow-lg transition-all duration-300 hover:shadow-xl">
-        <div className="w-[30%] overflow-hidden rounded-lg transition-transform duration-300 hover:scale-105">
+      <div className="flex flex-col md:flex-row w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-8 shadow-lg transition-all duration-300 hover:shadow-xl">
+        
+        {/* Product Image */}
+        <div className="w-full md:w-[30%] overflow-hidden rounded-lg transition-transform duration-300 hover:scale-105">
           <Image
             src={product.image}
             alt={product.title}
@@ -47,20 +49,22 @@ const ProductDetail: React.FC = () => {
           />
         </div>
 
-        <div className="w-[70%]">
-          <h2 className="text-3xl font-bold mt-6 text-gray-900">
+        {/* Product Details */}
+        <div className="w-full md:w-[70%] mt-6 md:mt-0 md:ml-8">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
             {product.title}
           </h2>
-          <p className="text-gray-600 mt-4 leading-relaxed">
+          <p className="text-gray-600 dark:text-gray-300 mt-4 leading-relaxed">
             {product.description}
           </p>
-          <p className="text-2xl font-semibold text-gray-900 mt-6">
+          <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mt-6">
             ${product.price}
           </p>
 
-          <div className="flex justify-center mt-6">
+          {/* Add to Cart Button */}
+          <div className="flex justify-center md:justify-start mt-6">
             <button
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg shadow-md transition-transform duration-300 hover:bg-blue-700 hover:scale-105"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg shadow-md transition-transform duration-300 hover:bg-blue-700 hover:scale-105 dark:bg-blue-500 dark:hover:bg-blue-600"
               onClick={handleAddToCart} // Call function when button is clicked
             >
               Add to Cart
@@ -73,4 +77,5 @@ const ProductDetail: React.FC = () => {
 };
 
 export default ProductDetail;
+
 

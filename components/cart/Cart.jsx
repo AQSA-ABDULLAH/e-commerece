@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux"; // Import useSelector from react-redux
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import CartItems from "./CartItems";
 
 const Cart = ({ isOpen, onClose }) => {
-  const cartItems = useSelector((state) => state.cart.cart); // Get cart items from Redux
+  const cartItems = useSelector((state) => state.cart.cart);
 
   // Calculate total price
   const totalPrice = cartItems.reduce((total, item) => total + item.price, 0).toFixed(2);
@@ -18,7 +18,6 @@ const Cart = ({ isOpen, onClose }) => {
       document.body.style.overflow = "";
     }
 
-    // Cleanup on unmount
     return () => {
       document.body.style.overflow = "";
     };
@@ -31,28 +30,25 @@ const Cart = ({ isOpen, onClose }) => {
       {/* Overlay */}
       <div
         className="fixed top-0 left-0 w-screen h-screen bg-[#0000007A] z-30"
-        onClick={onClose} // Close the sidebar when clicking the overlay
+        onClick={onClose}
       ></div>
 
       {/* Cart Container */}
-      <div className="fixed right-0 top-0 bottom-0 w-[23%] text-white bg-[#444] z-40">
+      <div className="fixed right-0 top-0 bottom-0 w-[23%] bg-gray-100 text-black dark:bg-gray-900 dark:text-white z-40 shadow-lg">
         {/* Header */}
-        <div className="text-[20px] px-6 py-4 font-style flex justify-between">
-          <header className="chakra-modal__header" id="chakra-modal--header">
-            Selected items
-          </header>
+        <div className="text-[20px] px-6 py-4 flex justify-between border-b border-gray-300 dark:border-gray-700">
+          <header className="font-semibold">Selected Items</header>
 
           {/* Close Button */}
           <button
             type="button"
             aria-label="Close"
-            className="text-white"
+            className="text-gray-700 dark:text-white hover:text-red-500"
             onClick={onClose}
           >
             <svg
               viewBox="0 0 24 24"
-              focusable="false"
-              className="w-3 h-3"
+              className="w-5 h-5"
               aria-hidden="true"
             >
               <path
@@ -69,10 +65,9 @@ const Cart = ({ isOpen, onClose }) => {
         </div>
 
         {/* Footer */}
-        <footer className="absolute bottom-0 w-full z-50">
+        <footer className="absolute bottom-0 w-full border-t border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
           <div className="px-6 py-4 flex justify-between">
             <h2 className="text-lg font-semibold">Total:</h2>
-            {/* Display total price */}
             <h2 className="text-lg font-semibold">${totalPrice}</h2>
           </div>
         </footer>
@@ -82,5 +77,3 @@ const Cart = ({ isOpen, onClose }) => {
 };
 
 export default Cart;
-
-

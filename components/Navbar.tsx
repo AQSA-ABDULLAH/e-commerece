@@ -1,53 +1,66 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { ShoppingCart, Menu } from "lucide-react";
+import { ShoppingCart, Menu, Sun, Moon } from "lucide-react";
 import Cart from "./cart/Cart";
-import { useSelector } from "react-redux"; 
+import { useSelector } from "react-redux";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isMounted, setIsMounted] = useState(false); // ✅ Track hydration completion
+  const [isMounted, setIsMounted] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   const cartItems = useSelector((state: any) => state.cart.cart);
   const cartCount = cartItems.length;
 
   useEffect(() => {
-    setIsMounted(true); // ✅ Ensure rendering only after client mounts
+    setIsMounted(true);
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") {
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
+    }
   }, []);
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    if (!darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
+
   return (
-    <nav className="bg-white shadow-md p-4 relative">
+    <nav className="bg-white dark:bg-gray-900 shadow-md p-4 relative">
       <div className="container mx-auto flex justify-between items-center">
-        {/* Logo */}
-        <Link href="/" className="text-xl font-bold text-gray-900">
+        <Link href="/" className="text-xl font-bold text-gray-900 dark:text-white">
           E-Shop
         </Link>
 
-        {/* Desktop Menu */}
         <div className="hidden md:flex space-x-6">
-          <Link href="/" className="text-gray-700 hover:text-gray-900">
+          <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
             Products
           </Link>
-          <Link href="/about" className="text-gray-700 hover:text-gray-900">
+          <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
             About
           </Link>
-          <Link href="/contact" className="text-gray-700 hover:text-gray-900">
+          <Link href="/contact" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
             Contact
           </Link>
         </div>
 
-        {/* Icons */}
         <div className="flex items-center space-x-4">
-          {/* Cart Icon - Opens Cart Sidebar */}
-          <button
-            className="relative text-gray-700 hover:text-gray-900"
-            onClick={() => setIsCartOpen(true)}
-          >
+          <button className="text-gray-700 dark:text-gray-300" onClick={toggleDarkMode}>
+            {darkMode ? <Sun size={24} /> : <Moon size={24} />}
+          </button>
+
+          <button className="relative text-gray-700 dark:text-gray-300" onClick={() => setIsCartOpen(true)}>
             <ShoppingCart size={24} />
-            {/* ✅ Show badge only if mounted and cart has items */}
             {isMounted && cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
                 {cartCount}
@@ -55,32 +68,26 @@ const Navbar: React.FC = () => {
             )}
           </button>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-gray-700 hover:text-gray-900"
-            onClick={() => setIsOpen(!isOpen)}
-          >
+          <button className="md:hidden text-gray-700 dark:text-gray-300" onClick={() => setIsOpen(!isOpen)}>
             <Menu size={24} />
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white shadow-md p-4">
-          <Link href="/products" className="block py-2 text-gray-700 hover:text-gray-900">
+        <div className="md:hidden bg-white dark:bg-gray-800 shadow-md p-4">
+          <Link href="/products" className="block py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
             Products
           </Link>
-          <Link href="/about" className="block py-2 text-gray-700 hover:text-gray-900">
+          <Link href="/about" className="block py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
             About
           </Link>
-          <Link href="/contact" className="block py-2 text-gray-700 hover:text-gray-900">
+          <Link href="/contact" className="block py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
             Contact
           </Link>
         </div>
       )}
 
-      {/* Cart Sidebar */}
       <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </nav>
   );
