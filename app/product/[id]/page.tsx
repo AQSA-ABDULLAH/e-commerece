@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React from "react";
 import { useParams } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/app/lib/features/cart/slice";
@@ -8,6 +8,7 @@ import useSWR from "swr";
 import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { motion, AnimatePresence } from "framer-motion";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -33,10 +34,16 @@ const ProductDetail: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6 flex justify-center items-center">
-      <div className="flex flex-col md:flex-row w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-8 shadow-lg transition-all duration-300 hover:shadow-xl">
-        {/* Shimmer Effect - Skeleton Loader */}
+      <AnimatePresence mode="wait">
         {!product ? (
-          <div className="animate-pulse flex space-x-4">
+          // Skeleton Loader
+          <motion.div
+            key="skeleton"
+            className="animate-pulse flex space-x-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
             <div className="bg-gray-300 dark:bg-gray-700 h-52 w-52 rounded-md"></div>
             <div className="space-y-4">
               <div className="h-6 w-48 bg-gray-300 dark:bg-gray-700 rounded"></div>
@@ -44,18 +51,25 @@ const ProductDetail: React.FC = () => {
               <div className="h-4 w-40 bg-gray-300 dark:bg-gray-700 rounded"></div>
               <div className="h-8 w-24 bg-gray-300 dark:bg-gray-700 rounded"></div>
             </div>
-          </div>
+          </motion.div>
         ) : (
-          <>
+          <motion.div
+            key={product.id}
+            className="flex flex-col md:flex-row w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-8 shadow-lg"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.5 }}
+          >
             {/* Product Image */}
-            <div className="w-full md:w-[30%] overflow-hidden rounded-lg transition-transform duration-300 hover:scale-105">
+            <div className="w-full md:w-[30%] overflow-hidden rounded-lg">
               <Image
                 src={product.image}
                 alt={product.title}
                 width={200}
                 height={200}
                 priority
-                className="mx-auto object-contain"
+                className="mx-auto object-contain transition-transform duration-300 hover:scale-105"
               />
             </div>
 
@@ -81,12 +95,13 @@ const ProductDetail: React.FC = () => {
                 </button>
               </div>
             </div>
-          </>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
       <ToastContainer />
     </div>
   );
 };
 
 export default ProductDetail;
+
