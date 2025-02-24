@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import ProductCard from "./ProductCard";
 
 interface Product {
@@ -11,6 +11,15 @@ interface Product {
   category: string;
 }
 
+const SkeletonLoader = () => (
+  <div className="animate-pulse space-y-4 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg">
+    <div className="h-48 bg-gray-300 dark:bg-gray-700 rounded-md"></div>
+    <div className="h-6 w-32 bg-gray-300 dark:bg-gray-700 rounded"></div>
+    <div className="h-4 w-24 bg-gray-300 dark:bg-gray-700 rounded"></div>
+    <div className="h-6 w-16 bg-gray-300 dark:bg-gray-700 rounded"></div>
+  </div>
+);
+
 const MainSection: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -18,32 +27,26 @@ const MainSection: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortOrder, setSortOrder] = useState<string>("default");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const productsPerPage = 6;
 
   useEffect(() => {
-    // Fetch Products
+    setLoading(true);
+
     fetch("https://fakestoreapi.com/products")
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
         setFilteredProducts(data);
+        setLoading(false);
       });
 
-    // Fetch Categories
     fetch("https://fakestoreapi.com/products/categories")
       .then((res) => res.json())
       .then((data) => setCategories(data));
-
-    // Check theme from localStorage
-    const storedTheme = localStorage.getItem("theme");
-    if (storedTheme === "dark") {
-      setDarkMode(true);
-    }
   }, []);
 
-  // Handle Filtering & Sorting
   useEffect(() => {
     let filtered = products;
 
@@ -58,23 +61,19 @@ const MainSection: React.FC = () => {
     }
 
     setFilteredProducts(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   }, [selectedCategory, sortOrder, products]);
 
-  // Pagination Logic
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   return (
     <div className="container mx-auto p-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
       <h2 className="text-2xl font-bold mb-4">Products</h2>
 
-      {/* Filters Section */}
       <div className="flex gap-4 mb-4">
-        {/* Category Filter */}
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
@@ -88,7 +87,6 @@ const MainSection: React.FC = () => {
           ))}
         </select>
 
-        {/* Sort Dropdown */}
         <select
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
@@ -100,14 +98,12 @@ const MainSection: React.FC = () => {
         </select>
       </div>
 
-      {/* Products Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {currentProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        {loading
+          ? Array.from({ length: productsPerPage }).map((_, index) => <SkeletonLoader key={index} />)
+          : currentProducts.map((product) => <ProductCard key={product.id} product={product} />)}
       </div>
 
-      {/* Pagination Controls */}
       <div className="flex justify-center mt-6">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -136,3 +132,4 @@ const MainSection: React.FC = () => {
 };
 
 export default MainSection;
+
